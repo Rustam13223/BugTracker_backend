@@ -1,24 +1,15 @@
 const db = require("../../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const axios = require("axios");
 
 async function register(req, res) {
   const { firstName, secondName, email, password, token } = req.body;
 
-  // try {
-  //   const response = await axios.post(
-  //     `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.reCAPTCHA_SECRET_KEY}&response=${token}`
-  //   );
-
-  //   if (!response.data.success) {
-  //     return res.status(500).json({
-  //       error: "captcha ignored",
-  //     });
-  //   }
-  // } catch (error) {
-  //   return res.status(500).send("Error verifying reCAPTCHA");
-  // }
+  if (process.env.ENABLE_CAPTCHA === "true" && !(await verifyCaptcha(token))) {
+    return res.json({
+      error: "error verifying captcha",
+    });
+  }
 
   const expectedUser = await db.query(
     "SELECT * FROM users WHERE email = $1::text",
