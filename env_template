@@ -2,6 +2,12 @@ PORT = ...
 
 JWT_ACCESS_SECRET = ...
 
+DB_USER = "postgres",
+DB_PASSWORD = "password",
+DB_HOST = "localhost",
+DB_PORT = 5432
+DB_DATABASE = "BugTrackerDB",
+
 ENABLE_CAPTCHA = ... [true/false]
 reCAPTCHA_SECRET_KEY = ...
 
