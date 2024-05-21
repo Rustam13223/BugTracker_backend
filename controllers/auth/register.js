@@ -17,7 +17,7 @@ async function register(req, res) {
   );
 
   if (expectedUser.rowCount > 0) {
-    return res.json({
+    return res.status(409).json({
       error: "already exist",
     });
   }
