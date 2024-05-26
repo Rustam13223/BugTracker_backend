@@ -1,4 +1,5 @@
 const db = require("../../db");
+const updateStats = require("../stats/update");
 
 async function update(req, res) {
   const id = req.params.id;
@@ -40,6 +41,11 @@ async function update(req, res) {
         id,
       ]);
     }
+
+    if (status === "done") {
+      await updateStats(id);
+    }
+
     return res.status(200).json({
       status: "ok",
     });
