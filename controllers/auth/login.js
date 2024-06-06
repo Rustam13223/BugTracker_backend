@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyCaptcha = require("./verifyCaptcha");
 
-async function register(req, res) {
+async function login(req, res) {
   const { email, password, token } = req.body;
 
   if (process.env.ENABLE_CAPTCHA === "true" && !(await verifyCaptcha(token))) {
@@ -50,4 +50,4 @@ async function register(req, res) {
   });
 }
 
-module.exports = register;
+module.exports = login;
