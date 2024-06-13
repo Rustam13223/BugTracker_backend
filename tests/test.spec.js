@@ -4,6 +4,7 @@ const app = require("../app");
 const db = require("../db");
 
 async function clearDB() {
+  await db.query("DELETE FROM stats");
   await db.query("DELETE FROM bugs");
   await db.query("DELETE FROM users");
 }
@@ -17,6 +18,8 @@ afterAll(async () => {
 });
 
 let accessToken;
+let bugId;
+let userId;
 
 describe("Route /auth", () => {
   it("POST /register", async () => {
@@ -68,8 +71,6 @@ describe("Route /auth", () => {
 });
 
 describe("Route /bugs", () => {
-  let bugId;
-
   it("GET / FAIL NOT AUTHORIZED", async () => {
     return request(app).get("/bugs").expect(401);
   });
@@ -154,6 +155,29 @@ describe("Route /users", () => {
         expect(body.users[0]).toHaveProperty("first_name", "Pawel");
         expect(body.users[0]).toHaveProperty("second_name", "Jablko");
         expect(body.users[0]).toHaveProperty("email", "example@mail.com");
+        userId = body.users[0].id;
+      });
+  });
+});
+
+describe("Route /stats", () => {
+  it("GET /stats", async () => {
+    return request(app)
+      .patch("/bugs/" + bugId)
+      .set("Authorization", "bearer " + accessToken)
+      .send({
+        assigned_to: userId,
+        status: "done",
+      })
+      .expect(200)
+      .then(() => {
+        request(app)
+          .get("/stats")
+          .set("Authorization", "bearer " + accessToken)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.stats[0]).toHaveProperty("solved_bugs", 1);
+          });
       });
   });
 });
