@@ -22,14 +22,17 @@ async function create(req, res) {
 
     assignedToUserid = dbResponse.rows[0]?.id || null;
 
-    if (assignedToUserid) {
-      mail.sendMail({
-        from: process.env.GMAIL_LOGIN,
-        to: assignedTo,
-        subject: `[New Bug] ${title}`,
-        text:
-          "Hi! A new bug has been assigned to you. Description: " + description,
-      });
+    if (process.env.ENV_TYPE !== "TEST") {
+      if (assignedToUserid) {
+        mail.sendMail({
+          from: process.env.GMAIL_LOGIN,
+          to: assignedTo,
+          subject: `[New Bug] ${title}`,
+          text:
+            "Hi! A new bug has been assigned to you. Description: " +
+            description,
+        });
+      }
     }
   }
 

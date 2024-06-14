@@ -1,5 +1,6 @@
 const db = require("../../db");
 const updateStats = require("../stats/update");
+const mail = require("../../email");
 
 async function update(req, res) {
   const id = req.params.id;
@@ -34,6 +35,22 @@ async function update(req, res) {
         assigned_to,
         id,
       ]);
+
+      if (process.env.ENV_TYPE !== "TEST") {
+        const dbResponse = await db.query(
+          "SELECT email FROM users WHERE id = $1::text",
+          [assignedTo]
+        );
+
+        const assignedToMail = dbResponse.rows[0]?.email;
+
+        mail.sendMail({
+          from: process.env.GMAIL_LOGIN,
+          to: assignedToMail,
+          subject: `[New Bug] #${id}`,
+          text: "Hi! A new bug has been assigned to you.",
+        });
+      }
     }
     if (severity) {
       await db.query("UPDATE bugs SET severity = $1::severity WHERE id = $2", [

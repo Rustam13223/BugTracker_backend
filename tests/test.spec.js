@@ -13,10 +13,6 @@ beforeAll(async () => {
   await clearDB();
 });
 
-afterAll(async () => {
-  await db.end();
-});
-
 let accessToken;
 let bugId;
 let userId;
