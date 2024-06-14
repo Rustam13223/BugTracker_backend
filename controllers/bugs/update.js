@@ -38,8 +38,8 @@ async function update(req, res) {
 
       if (process.env.ENV_TYPE !== "TEST") {
         const dbResponse = await db.query(
-          "SELECT email FROM users WHERE id = $1::text",
-          [assignedTo]
+          "SELECT email FROM users WHERE id = $1",
+          [assigned_to]
         );
 
         const assignedToMail = dbResponse.rows[0]?.email;
